@@ -1,8 +1,10 @@
 ﻿using DemoLibrary;
+using Squirrel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -20,6 +22,26 @@ namespace WinFormUI
       InitializeComponent();
 
       LoadPeopleList();
+
+      AddVersionNumber();
+
+      CheckForUpdates();
+    }
+
+    private void AddVersionNumber()
+    {
+      System.Reflection.Assembly assembly = System.Reflection.Assembly.GetExecutingAssembly();
+      FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(assembly.Location);
+
+      this.Text += $" v.{versionInfo.FileVersion}";
+    }
+
+    private async Task CheckForUpdates()
+    {
+      using (var manager = new UpdateManager(@"C:\data\Releases"))
+      {
+        await manager.UpdateApp();
+      }
     }
 
     private void addPersonButton_Click(object sender, EventArgs e)
